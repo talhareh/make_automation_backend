@@ -4,33 +4,36 @@ const http = require('http');
 const bodyParser = require('body-parser');
 
 const app = express();
-const server = http.createServer(app);
+const httpServer = http.createServer(app);
+const wsServer = http.createServer();
 
 const webSocketServer = new WebSocket({
-  httpServer: server,
+  httpServer: wsServer,
 });
 
 let connectedClients = [];
 
 webSocketServer.on('request', (request) => {
-  console.log('connection request received');
+  console.log('WebSocket connection request received');
   const connection = request.accept(null, request.origin);
   connectedClients.push(connection);
 
   connection.on('message', (message) => {
-    console.log(message);
+    console.log('Received message:', message);
   });
 
   connection.on('close', (reasonCode, description) => {
     connectedClients = connectedClients.filter(client => client !== connection);
+    console.log('Client disconnected:', description);
   });
 });
 
 app.use(bodyParser.json());
 
-app.get('/',(req,res)=>{
-  res.status(200).json({msg:'I am alive'})
-})
+app.get('/', (req, res) => {
+  console.log('HTTP connection checked');
+  res.status(200).json({ msg: 'I am alive' });
+});
 
 app.post('/fromMake', (req, res) => {
   const { topic, article } = req.body;
@@ -44,15 +47,20 @@ app.post('/fromMake', (req, res) => {
 
     res.status(200).json({ message: 'Data sent to clients successfully' });
   } catch (error) {
-    console.error('Error parsing JSON:', error);
-    res.status(400).json({ error: 'Invalid JSON payload' });
+    console.error('Error sending data:', error);
+    res.status(400).json({ error: 'Failed to send data to clients' });
   }
 });
 
-const PORT = 4000;
+const HTTP_PORT = 4000;
+const WS_PORT = 4001;
 
-server.listen(PORT, () => {
-  console.log(`Server is listening on port ${PORT}`);
+httpServer.listen(HTTP_PORT, () => {
+  console.log(`HTTP server is listening on port ${HTTP_PORT}`);
 });
 
-module.exports = app;
+wsServer.listen(WS_PORT, () => {
+  console.log(`WebSocket server is listening on port ${WS_PORT}`);
+});
+
+module.exports = { app, httpServer, wsServer };
