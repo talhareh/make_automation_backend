@@ -35,6 +35,14 @@ app.get('/', (req, res) => {
   res.status(200).json({ msg: 'I am alive' });
 });
 
+app.post('/echo', (req,res)=> {
+  console.log({request: req.body})
+  const echo = req.body
+  echo.msg = 'What goes around comes around'
+  res.status(200).json(echo)
+
+})
+
 app.post('/fromMake', (req, res) => {
   const { topic, article } = req.body;
 
