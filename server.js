@@ -43,6 +43,10 @@ app.post('/echo', (req,res)=> {
 
 })
 
+app.get('/abc', ()=>{
+  res.status(200).json({msg:'abc'})
+})
+
 app.post('/fromMake', (req, res) => {
   const { topic, article } = req.body;
 
