@@ -43,10 +43,6 @@ app.post('/echo', (req,res)=> {
 
 })
 
-app.get('/abc', ()=>{
-  res.status(200).json({msg:'abc'})
-})
-
 app.post('/fromMake', (req, res) => {
   const { topic, article } = req.body;
 
@@ -63,6 +59,14 @@ app.post('/fromMake', (req, res) => {
     res.status(400).json({ error: 'Failed to send data to clients' });
   }
 });
+
+app.post('/register',(req, res) =>{
+  /**  Register user */
+})
+
+app.post('/saveQuery' , ()=>{
+  // Save query sent to make.com
+})
 
 const HTTP_PORT = 4000;
 const WS_PORT = 4001;
