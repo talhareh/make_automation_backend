@@ -2,10 +2,12 @@ const WebSocket = require('websocket').server;
 const express = require('express');
 const http = require('http');
 const bodyParser = require('body-parser');
+const cors = require('cors')
 
 const app = express();
 const httpServer = http.createServer(app);
 const wsServer = http.createServer();
+app.use(cors())
 
 const webSocketServer = new WebSocket({
   httpServer: wsServer,
@@ -44,12 +46,12 @@ app.post('/echo', (req,res)=> {
 })
 
 app.post('/fromMake', (req, res) => {
-  const { topic, article } = req.body;
+  const { prompt, blog } = req.body;
 
   try {
     connectedClients.forEach(client => {
       if (client.connected) {
-        client.sendUTF(JSON.stringify({ topic, article }));
+        client.sendUTF(JSON.stringify({ prompt, blog }));
       }
     });
 
